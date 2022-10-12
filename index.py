@@ -10,8 +10,10 @@ class RobotsWar:
         "yellow": '\x1b[93m',
     }
 
+    round_player = 1
+
     # To set initial configurations
-    def __init__(self, name_robot_1: str, name_robot_2: str):
+    def __init__(self, name_robot_1: str, name_robot_2: str, color_robot_1: str = "blue", color_robot_2: str = "red"):
         def make_part_configurations(name: str, attack: int, defense: int, energy_consumption: int):
             return {
                 "name": name,
@@ -32,7 +34,7 @@ class RobotsWar:
 
         global_robots_configurations = {
             "parts": self.parts,
-            "energy": 100
+            "energy": 10
         }
 
         self.robot_1 = {
@@ -45,7 +47,7 @@ class RobotsWar:
             **global_robots_configurations
         }
 
-        self.show_robot(robot_parts=self.robot_1["parts"], color="blue")
+        self.show_energy(self.robot_1)
 
     @staticmethod
     def is_available_part(part_name: str, player_parts: dict) -> bool:
@@ -54,6 +56,23 @@ class RobotsWar:
     @staticmethod
     def is_robot_dead(robot: dict):
         return robot["energy"] <= 0
+
+    def show_energy(self, robot: dict):
+        energy = robot["energy"]
+
+        color: str
+
+        if energy >= 90:
+            color = self.colors["green"]
+        elif 40 <= energy < 90:
+            color = self.colors["yellow"]
+        else:
+            color = self.colors["red"]
+            print(self.colors["yellow"] + "A L E R T!".center(20))
+
+        print(color + "-"*20)
+        print(color + f"{energy} of energy".center(20))
+        print(color + "-"*20)
 
     def show_robot(self, robot_parts: dict, color: str):
         print(self.colors[color] + rf"""
