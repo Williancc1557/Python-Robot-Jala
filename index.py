@@ -25,16 +25,16 @@ class RobotsWar:
 
         self.parts = {
             "head": make_part_configurations(name="Head", attack=10, defense=20, energy_consumption=5),
-            "head_gun": make_part_configurations(name="Head Gun", attack=30, defense=15, energy_consumption=30),
-            "left_arm": make_part_configurations(name="Left Arm", attack=20, defense=30, energy_consumption=20),
-            "right_arm": make_part_configurations(name="Right Arm", attack=20, defense=30, energy_consumption=20),
-            "left_leg": make_part_configurations(name="Left Leg", attack=15, defense=15, energy_consumption=15),
-            "right_leg": make_part_configurations(name="Right Leg", attack=15, defense=15, energy_consumption=15)
+            "head_gun": make_part_configurations(name="Missile Launcher", attack=30, defense=20, energy_consumption=30),
+            "left_arm": make_part_configurations(name="Left Arm", attack=5, defense=25, energy_consumption=10),
+            "right_arm": make_part_configurations(name="Right Arm", attack=5, defense=25, energy_consumption=10),
+            "left_leg": make_part_configurations(name="Left Leg", attack=10, defense=20, energy_consumption=15),
+            "right_leg": make_part_configurations(name="Right Leg", attack=10, defense=20, energy_consumption=20)
         }
 
         global_robots_configurations = {
             "parts": self.parts,
-            "energy": 10
+            "energy": 100
         }
 
         self.robot_1 = {
@@ -46,8 +46,6 @@ class RobotsWar:
             "name": name_robot_2,
             **global_robots_configurations
         }
-
-        self.show_energy(self.robot_1)
 
     @staticmethod
     def is_available_part(part_name: str, player_parts: dict) -> bool:
