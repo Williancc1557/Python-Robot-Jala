@@ -47,9 +47,6 @@ class RobotsWar:
             **global_robots_configurations
         }
 
-        self.robot_1["parts"]["head_gun"]["is_available"] = False
-        self.robot_1["parts"]["head"]["is_available"] = False
-
         self.show_robot(self.robot_1["parts"], "blue")
 
     @staticmethod
@@ -77,10 +74,17 @@ class RobotsWar:
         print(color + f"{energy} of energy".center(20))
         print(color + "-"*20)
 
-    # this method select the component of robot to show if is available
-    def select_upper_body(self, robot_parts: dict):
-        if robot_parts["head"]["is_available"] and robot_parts["head_gun"]["is_available"]:
-            return fr""""
+    def show_robot(self, robot_parts: dict, color: str):
+        print(self.colors[color] +
+              select_upper_body(robot_parts) +
+              select_body(robot_parts) +
+              select_bottom_body(robot_parts))
+
+
+# this method select the component of robot to show if is available
+def select_upper_body(robot_parts: dict):
+    if robot_parts["head"]["is_available"] and robot_parts["head_gun"]["is_available"]:
+        return fr""""
              0: {robot_parts["head"]["name"]}
              Is available: {robot_parts["head"]["is_available"]}
              Attack: {robot_parts["head"]["attack"]}                              
@@ -94,8 +98,8 @@ class RobotsWar:
             |oooo| '    ' |oooo|         |Energy consumption: {robot_parts["head_gun"]["energy_consumption"]}
             |oooo|/\_||_/\|oooo|"""
 
-        elif not robot_parts["head"]["is_available"] and robot_parts["head_gun"]["is_available"]:
-            return fr""""         
+    elif not robot_parts["head"]["is_available"] and robot_parts["head_gun"]["is_available"]:
+        return fr""""         
                                          |1: {robot_parts["head_gun"]["name"]}
                                          |Is available: {robot_parts["head_gun"]["is_available"]}
              ____          ____          |Attack: {robot_parts["head_gun"]["attack"]}
@@ -103,8 +107,8 @@ class RobotsWar:
             |oooo|        |oooo|         |Energy consumption: {robot_parts["head_gun"]["energy_consumption"]}
             |oooo|        |oooo|"""
 
-        elif not robot_parts["head_gun"]["is_available"] and robot_parts["head"]["is_available"]:
-            return fr""""
+    elif not robot_parts["head_gun"]["is_available"] and robot_parts["head"]["is_available"]:
+        return fr""""
              0: {robot_parts["head"]["name"]}
              Is available: {robot_parts["head"]["is_available"]}
              Attack: {robot_parts["head"]["attack"]}                              
@@ -117,14 +121,16 @@ class RobotsWar:
                     ____          
                    '    '                
                   /\_||_/\      """
-        else:
-            return """
-            
-            
-            """
+    else:
+        return """
 
-    def show_robot(self, robot_parts: dict, color: str):
-        print(self.colors[color] + self.select_upper_body(robot_parts) + rf"""
+
+        """
+
+
+def select_body(robot_parts: dict):
+    if robot_parts["left_arm"]["is_available"] and robot_parts["right_arm"]["is_available"]:
+        return rf"""
             `----' / __ \  `----'           |2: {robot_parts["left_arm"]["name"]}
            '/  |#|/\/__\/\|#|  \'           |Is available: {robot_parts["left_arm"]["is_available"]}
            /  \|#|| |/\| ||#|/  \           |Attack: {robot_parts["left_arm"]["attack"]}
@@ -136,20 +142,95 @@ class RobotsWar:
         // \\ / |O|======|O| \  //\\        |Attack: {robot_parts["right_arm"]["attack"]}
         |  |  | |O+------+O| |  |  |        |Defense: {robot_parts["right_arm"]["defense"]}
         |\/|  \_+/        \+_/  |\/|        |Energy consumption: {robot_parts["right_arm"]["energy_consumption"]}
-        \__/  _|||        |||_  \__/        
+        \__/  _|||        |||_  \__/        """
+
+    elif not robot_parts["left_arm"]["is_available"] and robot_parts["right_arm"]["is_available"]:
+        return rf"""
+            `----' / __ \  `----'           
+               |#|/\/__\/\|#|  \'           
+               |#|| |/\| ||#|/  \           
+               |_|| |/\| ||_|\_/ \          |3: {robot_parts["right_arm"]["name"]}
+                 O\=----=/O    \/_|         |Is available: {robot_parts["right_arm"]["is_available"]}
+                  |=\__/=|      <_> ------> |Attack: {robot_parts["right_arm"]["attack"]}
+                  |------|      <_>         |Defense: {robot_parts["right_arm"]["defense"]}
+               ___|======|___   | |         |Energy consumption: {robot_parts["right_arm"]["energy_consumption"]}
+              / |O|======|O| \  //\\        
+              | |O+------+O| |  |  |        
+              \_+/        \+_/  |\/|        
+              _|||        |||_  \__/        """
+    elif robot_parts["left_arm"]["is_available"] and not robot_parts["right_arm"]["is_available"]:
+        return rf"""
+            `----' / __ \  `----'           
+           '/  |#|/\/__\/\|#|               
+           /  \|#|| |/\| ||#|               
+          / \_/|_|| |/\| ||_|               |2: {robot_parts["left_arm"]["name"]}
+         |_\/    O\=----=/O                 |Is available: {robot_parts["left_arm"]["is_available"]}
+         <_>      |=\__/=|          ------> |Attack: {robot_parts["left_arm"]["attack"]}
+         <_>      |------|                  |Defense: {robot_parts["left_arm"]["defense"]}
+         | |   ___|======|___               |Energy consumption: {robot_parts["left_arm"]["energy_consumption"]}
+        // \\ / |O|======|O| \              
+        |  |  | |O+------+O| |              
+        |\/|  \_+/        \+_/              
+        \__/  _|||        |||_              """
+    else:
+        return rf"""
+            `----' / __ \  `----'           
+               |#|/\/__\/\|#|               
+               |#|| |/\| ||#|               
+               |_|| |/\| ||_|               
+                 O\=----=/O                 
+                  |=\__/=|           
+                  |------|                  
+               ___|======|___               
+              / |O|======|O| \              
+              | |O+------+O| |              
+              \_+/        \+_/              
+              _|||        |||_              """
+
+
+def select_bottom_body(robot_parts: dict):
+    print(robot_parts)
+    if robot_parts["left_leg"]["is_available"] and robot_parts["right_leg"]["is_available"]:
+        return rf"""
               | ||        || |          |4: {robot_parts["left_leg"]["name"]} 
              [==|]        [|==]         |Is available: {robot_parts["left_leg"]["is_available"]}
              [===]        [===]         |Attack: {robot_parts["left_leg"]["attack"]}
               >_<          >_<          |Defense: {robot_parts["left_leg"]["defense"]}
              || ||        || ||         |Energy consumption: {robot_parts["left_leg"]["energy_consumption"]}
              || ||        || || ------> |
-             || ||        || ||         |5: {robot_parts["left_leg"]["name"]}
-           __|\_/|__    __|\_/|__       |Is available: {robot_parts["left_leg"]["is_available"]}
-          /___n_n___\  /___n_n___\      |Attack: {robot_parts["left_leg"]["attack"]}
-                                        |Defense: {robot_parts["left_leg"]["defense"]}
-                                        |Energy consumption: {robot_parts["left_leg"]["energy_consumption"]}
-
-        """)
-
-
+             || ||        || ||         |5: {robot_parts["right_leg"]["name"]}
+           __|\_/|__    __|\_/|__       |Is available: {robot_parts["right_leg"]["is_available"]}
+          /___n_n___\  /___n_n___\      |Attack: {robot_parts["right_leg"]["attack"]}
+                                        |Defense: {robot_parts["right_leg"]["defense"]}
+                                        |Energy consumption: {robot_parts["right_leg"]["energy_consumption"]}
+        """
+    elif not robot_parts["left_leg"]["is_available"] and robot_parts["right_leg"]["is_available"]:
+        return rf"""
+                          || |           
+                          [|==]         
+                          [===]         
+                           >_<          |5: {robot_parts["right_leg"]["name"]}
+                          || ||         |Is available: {robot_parts["right_leg"]["is_available"]}
+                          || || ------> |Attack: {robot_parts["right_leg"]["attack"]}
+                          || ||         |Defense: {robot_parts["right_leg"]["defense"]}
+                        __|\_/|__       |Energy consumption: {robot_parts["right_leg"]["energy_consumption"]}
+                       /___n_n___\      
+                                        
+                                        
+        """
+    elif robot_parts["left_leg"]["is_available"] and not robot_parts["right_leg"]["is_available"]:
+        return rf"""
+              | ||                       
+             [==|]                      
+             [===]                      
+              >_<                       |5: {robot_parts["left_leg"]["name"]}
+             || ||                      |Is available: {robot_parts["left_leg"]["is_available"]}
+             || ||              ------> |Attack: {robot_parts["left_leg"]["attack"]}
+             || ||                      |Defense: {robot_parts["left_leg"]["defense"]}
+           __|\_/|__                    |Energy consumption: {robot_parts["left_leg"]["energy_consumption"]}
+          /___n_n___\                   
+                                        
+                                        
+        """
+    return "\n\n"
 RobotsWar("Willian", "Junin")
