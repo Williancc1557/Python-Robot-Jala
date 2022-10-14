@@ -101,6 +101,8 @@ class Robot:
             "Right leg": Part("Right leg", attack_level=8, defense_level=20, energy_consumption=15),
         }
 
+        print(self.parts)
+
     def say_hi(self):
         print(self.color_code)
         print(self.player_name, "Hello, my name is", self.name)
@@ -122,6 +124,7 @@ class Robot:
     def get_part_status(self):
         part_status = {}
         for part in self.parts.values():
+            print(part.get_status_dict())
             status_dict = part.get_status_dict()
             part_status.update(status_dict)
         return part_status
