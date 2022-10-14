@@ -62,7 +62,7 @@ def select_body(robot_parts: dict):
         |\/|  \_+/        \+_/  |\/|        |Energy consumption: {right_arm_energy_consump}
         \__/  _|||        |||_  \__/        """
 
-    elif not robot_parts["left_arm"] and robot_parts["right_arm"]:
+    elif not robot_parts["left_arm_status"] and robot_parts["right_arm_status"]:
         return r"""
             `----' / __ \  `----'           
                |#|/\/__\/\|#|  \'           
@@ -135,7 +135,7 @@ def select_bottom_body(robot_parts: dict):
 
 
         """
-    elif robot_parts["left_leg_status"] and not robot_parts["left_leg_status"]:
+    elif robot_parts["left_leg_status"] and not robot_parts["right_leg_status"]:
         return r"""
               | ||                       
              [==|]                      
@@ -170,6 +170,9 @@ class Parts:
             f"{self.selector}_energy_consump": self.energy_consumption,
         }
 
+    def set_status(self, status: bool):
+        self.is_available = status
+
 
 class Robot:
     colors = {
@@ -187,18 +190,9 @@ class Robot:
 
     # To set initial configurations
     def __init__(self, name_player: str, name_robot: str, robot_color: str = "blue"):
-        def make_part_configurations(name: str, attack: int, defense: int, energy_consumption: int):
-            return {
-                "name": name,
-                "is_available": True,
-                "attack": attack,
-                "defense": defense,
-                "energy_consumption": energy_consumption,
-            }
-
         self.parts = {
             "head": Parts(name="Head", attack=10, defense=20, energy_consumption=5, selector="head"),
-            "head_gun": Parts(name="Missile Launcher", attack=30, defense=20, energy_consumption=30, selector="weapon"),
+            "weapon": Parts(name="Missile Launcher", attack=30, defense=20, energy_consumption=30, selector="weapon"),
             "left_arm": Parts(name="Left Arm", attack=5, defense=25, energy_consumption=10, selector="left_arm"),
             "right_arm": Parts(name="Right Arm", attack=5, defense=25, energy_consumption=10, selector="right_arm"),
             "left_leg": Parts(name="Left Leg", attack=10, defense=20, energy_consumption=15, selector="left_leg"),
@@ -215,6 +209,8 @@ class Robot:
             "energy": 100,
             "color": robot_color
         }
+
+        self.robot["parts"]["weapon"].set_status(False)
 
     def say_hi(self):
         print(f"hello guys, i'm {self.robot['name']}")
@@ -249,6 +245,7 @@ class Robot:
             all_parts.update(i.get_status_dict())
 
         return all_parts
+
     def show_robot(self):
         all_parts = self.get_all_parts()
         print((self.colors[self.robot["color"]] +
