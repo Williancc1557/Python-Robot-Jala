@@ -1,7 +1,6 @@
 import random
 
 from colorama import Fore
-from typing_extensions import Self
 
 robot_art = r"""
         0: {head_name}
@@ -135,7 +134,7 @@ class Robot:
         print(str_robot)
         print(colors["White"])
 
-    def attack(self, enemy_robot: Self, part_to_use: str, part_to_attack: str):
+    def attack(self, enemy_robot, part_to_use: str, part_to_attack: str):
         enemy_robot.parts[part_to_attack].defense_level -= self.parts[part_to_use].attack_level
         self.energy -= self.parts[part_to_attack].energy_consumption
 

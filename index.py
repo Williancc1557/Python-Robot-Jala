@@ -1,4 +1,4 @@
-class RobotsWar:
+class Robot:
     colors = {
         "black": '\x1b[90m',
         "blue": '\x1b[94m',
@@ -13,7 +13,7 @@ class RobotsWar:
     round_player = 1
 
     # To set initial configurations
-    def __init__(self, name_robot_1: str, name_robot_2: str, color_robot_1: str = "blue", color_robot_2: str = "red"):
+    def __init__(self, name_player: str, name_robot: str, color_robot: str = "blue"):
         def make_part_configurations(name: str, attack: int, defense: int, energy_consumption: int):
             return {
                 "name": name,
@@ -32,33 +32,27 @@ class RobotsWar:
             "right_leg": make_part_configurations(name="Right Leg", attack=10, defense=20, energy_consumption=20)
         }
 
-        global_robots_configurations = {
+        self.player = {
+            "name": name_player
+        }
+
+        self.robot = {
+            "name": name_robot,
             "parts": self.parts,
-            "energy": 100
+            "energy": 100,
+            "color": color_robot
         }
+    def say_hi(self):
+        print(f"hello guys, i'm {self.robot['name']}")
 
-        self.robot_1 = {
-            "name": name_robot_1,
-            **global_robots_configurations
-        }
-
-        self.robot_2 = {
-            "name": name_robot_2,
-            **global_robots_configurations
-        }
-
-        self.show_robot(self.robot_1["parts"], "blue")
-
-    @staticmethod
-    def is_available_part(part_name: str, player_parts: dict) -> bool:
-        return player_parts[part_name]["is_available"]
+    def is_available_part(self, part_name: str) -> bool:
+        return self.robot[part_name]["is_available"]
         
-    @staticmethod
-    def is_robot_dead(robot: dict):
-        return robot["energy"] <= 0
+    def is_on(self):
+        return self.robot["energy"] <= 0
 
-    def show_energy(self, robot: dict):
-        energy = robot["energy"]
+    def show_energy(self):
+        energy = self.robot["energy"]
 
         color: str
 
@@ -68,23 +62,23 @@ class RobotsWar:
             color = self.colors["yellow"]
         else:
             color = self.colors["red"]
-            print(self.colors["yellow"] + "A L E R T!".center(20))
+            print(self.colors["yellow"] + "A L E R T!".center(65))
 
-        print(color + "-"*20)
-        print(color + f"{energy} of energy".center(20))
-        print(color + "-"*20)
+        print(color + "-"*65)
+        print(color + f"{energy}% of energy".center(65))
+        print(color + "-"*65 + "\x1b[m")
 
-    def show_robot(self, robot_parts: dict, color: str):
-        print(self.colors[color] +
-              select_upper_body(robot_parts) +
-              select_body(robot_parts) +
-              select_bottom_body(robot_parts))
+    def show_robot(self):
+        print(self.colors[self.robot["color"]] +
+              select_upper_body(self.robot["parts"]) +
+              select_body(self.robot["parts"]) +
+              select_bottom_body(self.robot["parts"]) + "\x1b[m")
 
 
 # this method select the component of robot to show if is available
 def select_upper_body(robot_parts: dict):
     if robot_parts["head"]["is_available"] and robot_parts["head_gun"]["is_available"]:
-        return fr""""
+        return fr"""
              0: {robot_parts["head"]["name"]}
              Is available: {robot_parts["head"]["is_available"]}
              Attack: {robot_parts["head"]["attack"]}                              
@@ -99,7 +93,7 @@ def select_upper_body(robot_parts: dict):
             |oooo|/\_||_/\|oooo|"""
 
     elif not robot_parts["head"]["is_available"] and robot_parts["head_gun"]["is_available"]:
-        return fr""""         
+        return fr"""         
                                          |1: {robot_parts["head_gun"]["name"]}
                                          |Is available: {robot_parts["head_gun"]["is_available"]}
              ____          ____          |Attack: {robot_parts["head_gun"]["attack"]}
@@ -108,7 +102,7 @@ def select_upper_body(robot_parts: dict):
             |oooo|        |oooo|"""
 
     elif not robot_parts["head_gun"]["is_available"] and robot_parts["head"]["is_available"]:
-        return fr""""
+        return fr"""
              0: {robot_parts["head"]["name"]}
              Is available: {robot_parts["head"]["is_available"]}
              Attack: {robot_parts["head"]["attack"]}                              
@@ -189,7 +183,6 @@ def select_body(robot_parts: dict):
 
 
 def select_bottom_body(robot_parts: dict):
-    print(robot_parts)
     if robot_parts["left_leg"]["is_available"] and robot_parts["right_leg"]["is_available"]:
         return rf"""
               | ||        || |          |4: {robot_parts["left_leg"]["name"]} 
@@ -233,4 +226,3 @@ def select_bottom_body(robot_parts: dict):
                                         
         """
     return "\n\n"
-RobotsWar("Willian", "Junin")
