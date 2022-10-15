@@ -175,6 +175,11 @@ class Parts:
 
     def decrease_defense(self, decrease: int):
         self.defense -= decrease
+        if self.defense <= 0:
+            self.is_available = False
+
+    def get_attack(self):
+        return self.attack
 
 
 class Robot:
@@ -189,10 +194,15 @@ class Robot:
         "yellow": '\x1b[93m',
     }
 
-    round_player = 1
+    stop_color = '\x1b[m'
+
+    colors_options = {}
 
     # To set initial configurations
-    def __init__(self, name_player: str, name_robot: str, robot_color: str = "blue"):
+    def __init__(self, name_player: str, robot_name: str, default_robot_color: str = "blue") -> object:
+        for index, color in enumerate(self.colors):
+            self.colors_options[index + 1] = color
+
         self.parts = {
             "head": Parts(name="Head", attack=10, defense=20, energy_consumption=5, selector="head"),
             "weapon": Parts(name="Missile Launcher", attack=30, defense=20, energy_consumption=30, selector="weapon"),
@@ -207,24 +217,24 @@ class Robot:
         }
 
         self.robot = {
-            "name": name_robot,
+            "name": robot_name,
             "parts": self.parts,
             "energy": 100,
-            "color": robot_color
+            "color": default_robot_color
         }
 
         self.robot["parts"]["weapon"].set_status(False)
 
     def say_hi(self):
-        print(f"hello, i'm {self.robot['name']} and my boss is {self.player['name']}")
+        print(f"\nhello, i'm {self.robot['name']} and my boss is {self.player['name']}")
 
     def is_available_part(self, part_name: str) -> bool:
         return self.robot["parts"][part_name].is_available
         
-    def is_on(self):
+    def is_on(self) -> bool:
         return self.robot["energy"] <= 0
 
-    def show_energy(self):
+    def show_energy(self) -> None:
         energy = self.robot["energy"]
 
         color: str
@@ -238,10 +248,10 @@ class Robot:
             print(self.colors["yellow"] + "A L E R T!".center(65))
 
         print(color + "="*65)
-        print(color + f"{energy}% of energy".center(65))
-        print(color + "="*65 + "\x1b[m")
+        print(f"{energy}% of energy".center(65))
+        print("="*65 + self.stop_color)
 
-    def get_all_parts(self):
+    def get_all_parts(self) -> dict:
         all_parts = {}
 
         for i in self.parts.values():
@@ -254,18 +264,71 @@ class Robot:
         print((self.colors[self.robot["color"]] +
               select_upper_body(all_parts) +
               select_body(all_parts) +
-              select_bottom_body(all_parts) + "\x1b[m").format(**all_parts))
+              select_bottom_body(all_parts) + self.stop_color).format(**all_parts))
 
     def decrease_energy(self, decrease: int):
         self.robot["energy"] -= decrease
 
-    def decrease_part_defense(self, part, decrease):
-        self.robot["parts"][part.lower().strip()].decrease_defense(decrease)
+    def decrease_part_defense(self, part: str, decrease: int):
+        part_formatted = part.lower().strip()
+        self.robot["parts"][part_formatted].decrease_defense(decrease)
+
+    def show_color_options(self):
+        message = f"\n\nAVAILABLE COLORS\n{'-'*16}\n"
+
+        colors_options_values = self.colors_options.values()
+        for index, color in enumerate(colors_options_values):
+            message += f"{index + 1} : {self.colors[color]}{color.capitalize()}{self.stop_color}\n"
+
+        print(message)
+
+    def set_color(self, color_number: int):
+        if color_number not in self.colors_options.keys():
+            raise Exception("Invalid color")
+
+        self.robot['color'] = self.colors_options[color_number]
+
+    def get_part_attack(self, part: str) -> int:
+        return self.robot["parts"][part].get_attack()
 
 
-a = Robot(name_player="Willian", name_robot="Jubscleuson", robot_color="red")
+def config_robot():
+    player = {}
 
-a.decrease_energy(20)
-a.decrease_part_defense("head", 10)
-a.show_robot()
-a.show_energy()
+    def set_player_name(player_dict: dict):
+        name = input("Player name: ")
+        player_dict["name"] = name
+
+    set_player_name(player)
+    robot_name = input("Your robot name: ")
+
+    robot = Robot(name_player=player["name"], robot_name=robot_name)
+
+    robot.show_color_options()
+    color = int(input("Your robot color: "))
+    robot.set_color(color)
+    player["robot"] = robot
+
+    return player["robot"]
+
+
+def fight(robot_1: Robot, robot_2: Robot):
+    while True:
+        pass
+
+
+def start():
+    def initial(robot):
+        robot.say_hi()
+        robot.show_robot()
+
+    print("Player 1 Configurations")
+    robot_1 = config_robot()
+    initial(robot_1)
+
+    print("Player 2 Configurations")
+    robot_2 = config_robot()
+    initial(robot_2)
+
+
+start()
