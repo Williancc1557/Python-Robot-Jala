@@ -173,6 +173,9 @@ class Parts:
     def set_status(self, status: bool):
         self.is_available = status
 
+    def decrease_defense(self, decrease: int):
+        self.defense -= decrease
+
 
 class Robot:
     colors = {
@@ -213,7 +216,7 @@ class Robot:
         self.robot["parts"]["weapon"].set_status(False)
 
     def say_hi(self):
-        print(f"hello guys, i'm {self.robot['name']}")
+        print(f"hello, i'm {self.robot['name']} and my boss is {self.player['name']}")
 
     def is_available_part(self, part_name: str) -> bool:
         return self.robot["parts"][part_name].is_available
@@ -226,17 +229,17 @@ class Robot:
 
         color: str
 
-        if energy >= 90:
+        if energy >= 70:
             color = self.colors["green"]
-        elif 40 <= energy < 90:
+        elif 40 <= energy < 70:
             color = self.colors["yellow"]
         else:
             color = self.colors["red"]
             print(self.colors["yellow"] + "A L E R T!".center(65))
 
-        print(color + "-"*65)
+        print(color + "="*65)
         print(color + f"{energy}% of energy".center(65))
-        print(color + "-"*65 + "\x1b[m")
+        print(color + "="*65 + "\x1b[m")
 
     def get_all_parts(self):
         all_parts = {}
@@ -253,7 +256,16 @@ class Robot:
               select_body(all_parts) +
               select_bottom_body(all_parts) + "\x1b[m").format(**all_parts))
 
+    def decrease_energy(self, decrease: int):
+        self.robot["energy"] -= decrease
+
+    def decrease_part_defense(self, part, decrease):
+        self.robot["parts"][part.lower().strip()].decrease_defense(decrease)
+
 
 a = Robot(name_player="Willian", name_robot="Jubscleuson", robot_color="red")
 
+a.decrease_energy(20)
+a.decrease_part_defense("head", 10)
 a.show_robot()
+a.show_energy()
