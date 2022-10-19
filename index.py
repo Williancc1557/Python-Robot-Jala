@@ -243,7 +243,7 @@ class Robot:
         "yellow": '\x1b[93m',
     }
 
-    stop_color = '\x1b[m'
+    stop_color = '\x1b[0m'
 
     colors_options = {}
 
