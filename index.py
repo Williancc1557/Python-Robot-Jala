@@ -1,15 +1,18 @@
 # this method select the component of robot to show if is available
 from time import sleep
 
-shield_art = r"""
+
+def make_shield_art(robot_parts: dict):
+    if robot_parts["shield_status"]:
+        return r"""
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⣾⣿⣿⣷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⣤⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣶⣤⣤⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣤⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣶⣤⣤⠀⠀⠀⠀⠀⠀         |7: {shield_name}
+⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀         |Is available: {shield_status}
+⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀-------> |Is active: {shield_active}
+⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀         |Available use: {shield_use}
+⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀              |Energy consumption: {shield_energy_consump}
+⠀⠀⠀ ⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃   ⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -18,6 +21,10 @@ shield_art = r"""
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 """
+    else:
+        return ""
+
+
 def select_upper_body(robot_parts: dict):
     if robot_parts["head_status"] and robot_parts["weapon_status"]:
         return r"""
@@ -25,14 +32,15 @@ def select_upper_body(robot_parts: dict):
              Is available: {head_status}
              Attack: {head_attack}                              
              Defense: {head_defense}
+             Available use: {head_use}
              Energy consumption: {head_energy_consump}
                       ^
                       |                  |2: {weapon_name}
                       |                  |Is available: {weapon_status}
              ____     |    ____          |Attack: {weapon_attack}
             |oooo|  ____  |oooo| ------> |Defense: {weapon_defense}
-            |oooo| '    ' |oooo|         |Energy consumption: {weapon_energy_consump}
-            |oooo|/\_||_/\|oooo|"""
+            |oooo| '    ' |oooo|         |Available use: {weapon_use}
+            |oooo|/\_||_/\|oooo|         |Energy consumption: {weapon_energy_consump}"""
 
     elif not robot_parts["head_status"] and robot_parts["weapon_status"]:
         return r"""         
@@ -40,8 +48,8 @@ def select_upper_body(robot_parts: dict):
                                          |Is available: {weapon_status}
              ____          ____          |Attack: {weapon_attack}
             |oooo|        |oooo| ------> |Defense: {weapon_defense}
-            |oooo|        |oooo|         |Energy consumption: {weapon_energy_consump}
-            |oooo|        |oooo|"""
+            |oooo|        |oooo|         |Available use: {weapon_use}
+            |oooo|        |oooo|         |Energy consumption: {weapon_energy_consump}"""
 
     elif not robot_parts["weapon_status"] and robot_parts["head_status"]:
         return r"""
@@ -49,6 +57,7 @@ def select_upper_body(robot_parts: dict):
              Is available: {head_status}
              Attack: {head_attack}                              
              Defense: {head_defense}
+             Available use: {head_use}
              Energy consumption: {head_energy_consump}
                       ^
                       |                  
@@ -66,19 +75,20 @@ def select_upper_body(robot_parts: dict):
 
 def select_body(robot_parts: dict):
     if robot_parts["left_arm_status"] and robot_parts["right_arm_status"]:
-        return r"""
+        return r"""                    
             `----' / __ \  `----'           |3: {left_arm_name}
            '/  |#|/\/__\/\|#|  \'           |Is available: {left_arm_status}
            /  \|#|| |/\| ||#|/  \           |Attack: {left_arm_attack}
-          / \_/|_|| |/\| ||_|\_/ \          |Defense: {left_arm_defense}
+          / \_/|_|| |/\| ||_|\_/ \          |Defense: {left_arm_defense} / |Available use: {left_arm_use}
          |_\/    O\=----=/O    \/_|         |Energy consumption: {left_arm_energy_consump}
          <_>      |=\__/=|      <_> ------> |
          <_>      |------|      <_>         |4: {right_arm_name}
          | |   ___|======|___   | |         |Is available: {right_arm_status}
         // \\ / |O|======|O| \  //\\        |Attack: {right_arm_attack}
         |  |  | |O+------+O| |  |  |        |Defense: {right_arm_defense}
-        |\/|  \_+/        \+_/  |\/|        |Energy consumption: {right_arm_energy_consump}
-        \__/  _|||        |||_  \__/        """
+        |\/|  \_+/        \+_/  |\/|        |Available use: {right_arm_use}
+        \__/  _|||        |||_  \__/        |Energy consumption: {right_arm_energy_consump}
+              | ||        | ||"""
 
     elif not robot_parts["left_arm_status"] and robot_parts["right_arm_status"]:
         return r"""
@@ -89,11 +99,12 @@ def select_body(robot_parts: dict):
                  O\=----=/O    \/_|         |Is available: {right_arm_status}
                   |=\__/=|      <_> ------> |Attack: {right_arm_attack}
                   |------|      <_>         |Defense: {right_arm_defense}
-               ___|======|___   | |         |Energy consumption: {right_arm_energy_consump}
-              / |O|======|O| \  //\\        
+               ___|======|___   | |         |Available use: {right_arm_use}
+              / |O|======|O| \  //\\        |Energy consumption: {right_arm_energy_consump}
               | |O+------+O| |  |  |        
               \_+/        \+_/  |\/|        
-              _|||        |||_  \__/        """
+              _|||        |||_  \__/        
+              | ||        | ||"""
     elif robot_parts["left_arm_status"] and not robot_parts["right_arm_status"]:
         return r"""
             `----' / __ \  `----'           
@@ -103,11 +114,12 @@ def select_body(robot_parts: dict):
          |_\/    O\=----=/O                 |Is available: {left_arm_status}
          <_>      |=\__/=|          ------> |Attack: {left_arm_attack}
          <_>      |------|                  |Defense: {left_arm_defense}
-         | |   ___|======|___               |Energy consumption: {left_arm_energy_consump}
-        // \\ / |O|======|O| \              
+         | |   ___|======|___               |Available use: {left_arm_use}
+        // \\ / |O|======|O| \              |Energy consumption: {left_arm_energy_consump}
         |  |  | |O+------+O| |              
         |\/|  \_+/        \+_/              
-        \__/  _|||        |||_              """
+        \__/  _|||        |||_              
+              | ||        || |"""
     else:
         return rf"""
             `----' / __ \  `----'           
@@ -121,22 +133,26 @@ def select_body(robot_parts: dict):
               / |O|======|O| \              
               | |O+------+O| |              
               \_+/        \+_/              
-              _|||        |||_              """
+              _|||        |||_              
+              | ||        || |
+"""
 
 
 def select_bottom_body(robot_parts: dict):
     if robot_parts["left_leg_status"] and robot_parts["right_leg_status"]:
         return r"""
-              | ||        || |          |5: {left_leg_name} 
-             [==|]        [|==]         |Is available: {left_leg_status}
-             [===]        [===]         |Attack: {left_leg_attack}
-              >_<          >_<          |Defense: {left_leg_defense}
+             [==|]        [|==]         |5: {left_leg_name}
+             [===]        [===]         |Is available: {left_leg_status} 
+              >_<          >_<          |Attack: {left_leg_attack}
+             || ||        || ||         |Defense: {left_leg_defense}
+             || ||        || || ------> |Available use: {left_leg_use}
              || ||        || ||         |Energy consumption: {left_leg_energy_consump}
-             || ||        || || ------> |
-             || ||        || ||         |6: {right_leg_name}
-           __|\_/|__    __|\_/|__       |Is available: {right_leg_status}
-          /___n_n___\  /___n_n___\      |Attack: {right_leg_attack}
+           __|\_/|__    __|\_/|__       |
+          /___n_n___\  /___n_n___\      |6: {right_leg_name}
+                                        |Is available: {right_leg_status}
+                                        |Attack: {right_leg_attack}
                                         |Defense: {right_leg_defense}
+                                        |Available use: {right_leg_use}
                                         |Energy consumption: {right_leg_energy_consump}
         """
     elif not robot_parts["left_leg_status"] and robot_parts["right_leg_status"]:
@@ -148,8 +164,8 @@ def select_bottom_body(robot_parts: dict):
                           || ||         |Is available: {right_leg_status}
                           || || ------> |Attack: {right_leg_attack}
                           || ||         |Defense: {right_leg_defense}
-                        __|\_/|__       |Energy consumption: {right_leg_energy_consump}
-                       /___n_n___\      
+                        __|\_/|__       |Available use: {right_leg_use}
+                       /___n_n___\      |Energy consumption: {right_leg_energy_consump}
 
 
         """
@@ -162,8 +178,8 @@ def select_bottom_body(robot_parts: dict):
              || ||                      |Is available: {left_leg_status}
              || ||              ------> |Attack: {left_leg_attack}
              || ||                      |Defense: {left_leg_defense}
-           __|\_/|__                    |Energy consumption: {left_leg_energy_consump}
-          /___n_n___\                   
+           __|\_/|__                    |Available use: {left_leg_use}
+          /___n_n___\                   |Energy consumption: {left_leg_energy_consump}
 
 
         """
@@ -171,13 +187,16 @@ def select_bottom_body(robot_parts: dict):
 
 
 class Parts:
-    def __init__(self, name: str, attack: int, defense: int, energy_consumption: int, selector: str):
+    def __init__(self, name: str, attack: int, defense: int, energy_consumption: int, selector: str, is_shield=False):
         self.name = name
         self.is_available = True
+        self.available_usability = 2
         self.attack = attack
         self.defense = defense
         self.energy_consumption = energy_consumption
         self.selector = selector
+        self.is_shield = is_shield
+        self.is_active_shield = False
 
     def get_status_dict(self):
         return {
@@ -186,10 +205,17 @@ class Parts:
             f"{self.selector}_attack": self.attack,
             f"{self.selector}_defense": self.defense,
             f"{self.selector}_energy_consump": self.energy_consumption,
+            f"{self.selector}_use": self.available_usability,
+            f"{self.selector}_active": self.is_active_shield
         }
 
     def set_status(self, status: bool):
         self.is_available = status
+
+    def decrease_usability(self):
+        self.available_usability -= 1
+        if self.available_usability <= 0:
+            self.is_available = False
 
     def decrease_defense(self, decrease: int):
         self.defense -= decrease
@@ -198,6 +224,11 @@ class Parts:
 
     def get_attack(self):
         return self.attack
+
+    def active_shield(self, value=True):
+        if value:
+            self.decrease_usability()
+        self.is_active_shield = value
 
 
 class Robot:
@@ -223,12 +254,14 @@ class Robot:
             self.colors_options[index + 1] = color
 
         self.parts = {
-            "head": Parts(name="Head", attack=10, defense=30, energy_consumption=30, selector="head"),
+            "head": Parts(name="Head", attack=15, defense=30, energy_consumption=10, selector="head"),
             "weapon": Parts(name="Missile Launcher", attack=50, defense=45, energy_consumption=100, selector="weapon"),
-            "left_arm": Parts(name="Left Arm", attack=8, defense=38, energy_consumption=10, selector="left_arm"),
-            "right_arm": Parts(name="Right Arm", attack=8, defense=38, energy_consumption=10, selector="right_arm"),
-            "left_leg": Parts(name="Left Leg", attack=14, defense=40, energy_consumption=15, selector="left_leg"),
-            "right_leg": Parts(name="Right Leg", attack=14, defense=40, energy_consumption=15, selector="right_leg")
+            "left_arm": Parts(name="Left Arm", attack=18, defense=38, energy_consumption=18, selector="left_arm"),
+            "right_arm": Parts(name="Right Arm", attack=18, defense=38, energy_consumption=18, selector="right_arm"),
+            "left_leg": Parts(name="Left Leg", attack=20, defense=40, energy_consumption=20, selector="left_leg"),
+            "right_leg": Parts(name="Right Leg", attack=20, defense=40, energy_consumption=20, selector="right_leg"),
+            "shield": Parts(name="Shield", attack=0, defense=60, is_shield=True, energy_consumption=50,
+                            selector="shield")
         }
 
         for index, part in enumerate(self.parts.values()):
@@ -249,6 +282,9 @@ class Robot:
         print(f"\nhello, i'm {self.robot['name']} and my boss is {self.player['name']}")
 
     def is_available_part(self, part: int) -> bool:
+        if self.robot["parts"]["shield"].is_active_shield:
+            return part == 7
+
         return self.robot["parts"][self.parts_options[part]].is_available
 
     def is_all_parts_not_available(self):
@@ -282,6 +318,9 @@ class Robot:
     def show_parts_options(self, title="PARTS AVAILABLE"):
         message = f"\n{title}\n\n"
 
+        if self.robot["parts"]["shield"].is_active_shield:
+            return print(message + f"{self.colors[self.robot['color']]}7 : shield{self.stop_color}\n")
+
         for index, part in enumerate(self.parts.values()):
             if part.is_available:
                 message += f"{index + 1} : {self.colors[self.robot['color']]} {part.name}{self.stop_color}\n"
@@ -302,13 +341,16 @@ class Robot:
                select_upper_body(all_parts) +
                select_body(all_parts) +
                select_bottom_body(all_parts) +
-               shield_art + self.stop_color).format(**all_parts))
+               make_shield_art(all_parts) + self.stop_color).format(**all_parts))
 
     def decrease_energy(self, decrease: int):
         self.robot["energy"] -= decrease
 
     def decrease_part_defense(self, part: int, decrease: int):
         self.robot["parts"][self.parts_options[part]].decrease_defense(decrease)
+
+    def decrease_part_usability(self, part: int):
+        self.robot["parts"][self.parts_options[part]].decrease_usability()
 
     def show_color_options(self):
         message = f"\n\nAVAILABLE COLORS\n{'-' * 16}\n"
@@ -331,6 +373,12 @@ class Robot:
     def get_part_attack(self, part: int) -> int:
         return self.robot["parts"][self.parts_options[part]].get_attack()
 
+    def active_shield(self, active: bool = True):
+        self.robot["parts"]["shield"].active_shield(active)
+
+    def is_active_shield(self):
+        return self.robot["parts"]["shield"].is_active_shield
+
 
 def config_robot() -> Robot:
     name = input("Player name: ")
@@ -346,13 +394,14 @@ def config_robot() -> Robot:
 
 
 def start():
-    def initial(robot):
+    def initial(robot: Robot):
         robot.say_hi()
         robot.show_robot()
 
     def check_winner(robot_1: Robot, robot_2: Robot):
         robot_1_win = f"\n\nNice {robot_1.player['name']}, your robot {robot_1.robot['name']} won this game"
         robot_2_win = f"\n\nNice {robot_2.player['name']}, your robot {robot_2.robot['name']} won this game"
+
         if not robot_1.is_on():
             print(robot_2_win)
             return True
@@ -386,18 +435,26 @@ def start():
 
 def fight(robot: Robot, enemy: Robot, player_number: int):
     print(f"\n\n== Player {player_number} fight ==\n\n")
+    if robot.is_active_shield():
+        robot.active_shield(False)
     robot.show_robot()
     robot.show_energy()
     robot.show_parts_options()
-
     while True:
-        part_to_use = int(input("Select one part to fight: (ex: head) "))
+        part_to_use = int(input("Select one part to fight: (or use the shield) "))
         if not robot.is_available_part(part=part_to_use):
             print("You can't use that part, it is not available!")
         else:
             break
 
+    if part_to_use == 7:
+        robot.active_shield(True)
+        print("SHIELD ACTIVE FOR 1 ROUND")
+        sleep(2)
+        return
+
     print("\nChoose enemy part to attack")
+
     enemy.show_parts_options()
     while True:
         enemy_part_to_attack = int(input("Select enemy part to attack: "))
@@ -408,6 +465,7 @@ def fight(robot: Robot, enemy: Robot, player_number: int):
 
     attack = robot.get_part_attack(part_to_use)
     robot.decrease_energy(robot.get_part(part_to_use).energy_consumption)
+    robot.decrease_part_usability(part_to_use)
     enemy.decrease_part_defense(decrease=attack, part=enemy_part_to_attack)
 
 
