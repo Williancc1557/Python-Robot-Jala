@@ -1,5 +1,23 @@
 # this method select the component of robot to show if is available
+from time import sleep
 
+shield_art = r"""
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⣾⣿⣿⣷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣤⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣶⣤⣤⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⣿⣿⣿⣿⣿⣿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+"""
 def select_upper_body(robot_parts: dict):
     if robot_parts["head_status"] and robot_parts["weapon_status"]:
         return r"""
@@ -233,6 +251,14 @@ class Robot:
     def is_available_part(self, part: int) -> bool:
         return self.robot["parts"][self.parts_options[part]].is_available
 
+    def is_all_parts_not_available(self):
+        parts_available = []
+
+        for part in self.robot["parts"].values():
+            parts_available.append(part.is_available)
+
+        return not (True in parts_available)
+
     def is_on(self) -> bool:
         return self.robot["energy"] >= 0
 
@@ -253,11 +279,12 @@ class Robot:
         print(f"{energy}% of energy".center(65))
         print("=" * 65 + self.stop_color)
 
-    def show_parts_options(self):
-        message = "\nPARTS AVAILABLE\n\n"
+    def show_parts_options(self, title="PARTS AVAILABLE"):
+        message = f"\n{title}\n\n"
 
         for index, part in enumerate(self.parts.values()):
-            message += f"{index + 1} : {self.colors[self.robot['color']]} {part.name}{self.stop_color}\n"
+            if part.is_available:
+                message += f"{index + 1} : {self.colors[self.robot['color']]} {part.name}{self.stop_color}\n"
 
         print(message)
 
@@ -274,7 +301,8 @@ class Robot:
         print((self.colors[self.robot["color"]] +
                select_upper_body(all_parts) +
                select_body(all_parts) +
-               select_bottom_body(all_parts) + self.stop_color).format(**all_parts))
+               select_bottom_body(all_parts) +
+               shield_art + self.stop_color).format(**all_parts))
 
     def decrease_energy(self, decrease: int):
         self.robot["energy"] -= decrease
@@ -305,23 +333,16 @@ class Robot:
 
 
 def config_robot() -> Robot:
-    player = {}
-
-    def set_player_name(player_dict: dict):
-        name = input("Player name: ")
-        player_dict["name"] = name
-
-    set_player_name(player)
+    name = input("Player name: ")
     robot_name = input("Your robot name: ")
 
-    robot = Robot(name_player=player["name"], robot_name=robot_name)
+    robot = Robot(name_player=name, robot_name=robot_name)
 
     robot.show_color_options()
     color = int(input("Your robot color: "))
     robot.set_color(color)
-    player["robot"] = robot
 
-    return player["robot"]
+    return robot
 
 
 def start():
@@ -330,11 +351,18 @@ def start():
         robot.show_robot()
 
     def check_winner(robot_1: Robot, robot_2: Robot):
+        robot_1_win = f"\n\nNice {robot_1.player['name']}, your robot {robot_1.robot['name']} won this game"
+        robot_2_win = f"\n\nNice {robot_2.player['name']}, your robot {robot_2.robot['name']} won this game"
         if not robot_1.is_on():
-            print(f"\n\nNice {robot_2.player['name']}, your robot {robot_2.robot['name']} won this game")
+            print(robot_2_win)
             return True
-        if not robot_2.is_on():
-            print(f"\n\nNice {robot_1.player['name']}, your robot {robot_1.robot['name']} won this game")
+        elif not robot_2.is_on():
+            print(robot_1_win)
+            return True
+        elif robot_1.is_all_parts_not_available():
+            print(robot_2_win)
+        elif robot_2.is_all_parts_not_available():
+            print(robot_1_win)
             return True
         return False
 
@@ -345,12 +373,15 @@ def start():
     print("Player 2 Configurations")
     robot_2 = config_robot()
     initial(robot_2)
+
+    sleep(1)
     while True:
+        fight(robot=robot_1, enemy=robot_2, player_number=1)
         if check_winner(robot_1, robot_2):
             break
-
-        fight(robot=robot_1, enemy=robot_2, player_number=1)
         fight(robot=robot_2, enemy=robot_1, player_number=2)
+        if check_winner(robot_1, robot_2):
+            break
 
 
 def fight(robot: Robot, enemy: Robot, player_number: int):
@@ -366,6 +397,8 @@ def fight(robot: Robot, enemy: Robot, player_number: int):
         else:
             break
 
+    print("\nChoose enemy part to attack")
+    enemy.show_parts_options()
     while True:
         enemy_part_to_attack = int(input("Select enemy part to attack: "))
         if not enemy.is_available_part(part=enemy_part_to_attack):
