@@ -278,7 +278,7 @@ class Robot:
         }
 
     def say_hi(self):
-        print(f"\n{self.robot['color']}hello, i'm {self.robot['name']} and my boss is {self.player['name']}{self.stop_color}")
+        print(f"\n{self.colors[self.robot['color']]}hello, i'm {self.robot['name']} and my boss is {self.player['name']}{self.stop_color}")
 
     def is_available_part(self, part: int) -> bool:
         if self.robot["parts"]["shield"].is_active_shield:
