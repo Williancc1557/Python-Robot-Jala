@@ -11,8 +11,8 @@ def make_shield_art(robot_parts: dict):
 ⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀    |Is available: {shield_status}
 ⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀-------> |Is active: {shield_active}
 ⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀    |Available use: {shield_use}
-⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀         |Energy consumption: {shield_energy_consump}
-⠀⠀⠀ ⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃   ⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀         |Defense: {shield_defense}
+⠀⠀⠀ ⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃   ⠀⠀⠀     |Energy consumption: {shield_energy_consump}
 ⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -150,8 +150,8 @@ def select_bottom_body(robot_parts: dict):
                                         |Attack: {right_leg_attack}
                                         |Defense: {right_leg_defense}
                                         |Energy consumption: {right_leg_energy_consump}
-                                        
-                                        
+
+
         """
     elif not robot_parts["left_leg_status"] and robot_parts["right_leg_status"]:
         return r"""
@@ -185,7 +185,8 @@ def select_bottom_body(robot_parts: dict):
 
 
 class Parts:
-    def __init__(self, name: str, attack: int, defense: int, energy_consumption: int, is_special=False, selector='', is_shield=False):
+    def __init__(self, name: str, attack: int, defense: int, energy_consumption: int, is_special=False, selector='',
+                 is_shield=False):
         self.name = name
         self.is_available = True
         self.is_special = is_special
@@ -254,7 +255,8 @@ class Robot:
 
         self.parts = {
             "head": Parts(name="Head", attack=15, defense=30, energy_consumption=10, selector="head"),
-            "weapon": Parts(name="Missile Launcher", attack=50, defense=45, energy_consumption=100, is_special=True, selector="weapon"),
+            "weapon": Parts(name="Missile Launcher", attack=90, defense=45, energy_consumption=90, is_special=True,
+                            selector="weapon"),
             "left_arm": Parts(name="Left Arm", attack=18, defense=38, energy_consumption=18, selector="left_arm"),
             "right_arm": Parts(name="Right Arm", attack=18, defense=38, energy_consumption=18, selector="right_arm"),
             "left_leg": Parts(name="Left Leg", attack=20, defense=40, energy_consumption=20, selector="left_leg"),
@@ -273,18 +275,22 @@ class Robot:
         self.robot = {
             "name": robot_name,
             "parts": self.parts,
-            "energy": 300,
+            "energy": 100,
             "color": default_robot_color
         }
 
     def say_hi(self):
-        print(f"\n{self.colors[self.robot['color']]}hello, i'm {self.robot['name']} and my boss is {self.player['name']}{self.stop_color}")
+        print(
+            f"\n{self.colors[self.robot['color']]}hello, i'm {self.robot['name']} and my boss is {self.player['name']}{self.stop_color}")
 
     def is_available_part(self, part: int) -> bool:
         if self.robot["parts"]["shield"].is_active_shield:
             return part == 7
 
-        return self.robot["parts"][self.parts_options[part]].is_available
+        try:
+            return self.robot["parts"][self.parts_options[part]].is_available
+        except:
+            return False
 
     def is_all_parts_not_available(self):
         parts_available = []
@@ -295,7 +301,7 @@ class Robot:
         return not (True in parts_available)
 
     def is_on(self) -> bool:
-        return self.robot["energy"] >= 0
+        return self.robot["energy"] > 0
 
     def show_energy(self) -> None:
         energy = self.robot["energy"]
@@ -412,6 +418,7 @@ def start():
             return True
         elif robot_1.is_all_parts_not_available():
             print(robot_2_win)
+            return True
         elif robot_2.is_all_parts_not_available():
             print(robot_1_win)
             return True
